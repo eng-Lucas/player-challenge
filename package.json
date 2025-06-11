@@ -1,17 +1,46 @@
 {
   "name": "player-challenge",
   "version": "1.0.0",
-  "main": "main.js",
+  "main": "dist/main.js",
+  "type": "commonjs",
+  "author": "Lucas Ferreira da Silva",
+  "license": "ISC",
+  "description": "",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "lint": "eslint '**/*.js'",
     "lint:fix": "eslint '**/*.js' --fix",
-    "build": "babel src --out-dir dist",
-    "start": "npm run build && electron ."
+    "build:babel": "babel src --out-dir dist",
+    "build:electron": "electron-builder",
+    "build:win": "npm run build:babel && electron-builder --win",
+    "build:linux": "npm run build:babel && electron-builder --linux",
+    "build:mac": "npm run build:babel && electron-builder --mac",
+    "copy:assets": "cpx \"src/renderer/*.{html,css}\" dist/",
+    "build": "npm run build:babel && npm run copy:assets && electron-builder",
+    "start": "npm run build:babel && npm run copy:assets && electron ."
   },
-  "author": "Lucas Ferreira da Silva",
-  "license": "ISC",
-  "description": "",
+  "build": {
+    "appId": "com.challenge.player",
+    "directories": {
+      "output": "release"
+    },
+    "files": [
+      "dist/**/*",
+      "assets/**/*"
+    ],
+    "win": {
+      "target": "nsis",
+      "artifactName": "${productName}-Setup-${version}.exe"
+    },
+    "linux": {
+      "target": "AppImage",
+      "artifactName": "${productName}-${version}.AppImage"
+    },
+    "mac": {
+      "target": "dmg",
+      "artifactName": "${productName}-${version}.dmg"
+    }
+  },
   "devDependencies": {
     "@babel/cli": "^7.27.2",
     "@babel/core": "^7.27.4",
@@ -25,7 +54,10 @@
     "@eslint/js": "^9.19.0",
     "babel-loader": "^10.0.0",
     "babel-plugin-inline-json-import": "^0.3.2",
+    "copyfiles": "^2.4.1",
+    "cpx": "^1.5.0",
     "electron": "^36.4.0",
+    "electron-builder": "^26.0.12",
     "esbuild": "^0.25.0",
     "esbuild-plugin-babel": "^0.2.3",
     "eslint": "^9.19.0",
