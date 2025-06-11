@@ -1,4 +1,4 @@
-const Player = require('./dist/player/Player.js').default
+import Player from './player/Player.js'
 
 window.addEventListener('DOMContentLoaded', () => {
   const player = new Player()

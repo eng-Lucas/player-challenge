@@ -12,8 +12,12 @@ export default class Logger {
     const prefix = `[${timestamp}] [${level.toUpperCase()}]`
     const fullMessage = `${prefix} ${message}\n`
 
+    try {
     // save to file
     fs.appendFileSync(this.logPath, fullMessage)
+    } catch (err) {
+      console.error(`[${timestamp}] [ERROR] Erro ao salvar no arquivo de logs ${err}`)
+    }
 
     // log to console
     switch (level) {
