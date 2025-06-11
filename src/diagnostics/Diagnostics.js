@@ -26,31 +26,17 @@ export default class Diagnostics {
     }
   }
 
-  async toggleDiagnosticsOverlay(info) {
-    let overlay = document.getElementById('diagnostics-overlay')
+  toggleDiagnosticsOverlay(info) {
+    const overlay = document.getElementById('diagnostics-overlay')
+    if (!overlay) return
 
-    if (overlay) {
-      // remove if is already visible
-      overlay.remove()
-      return
+    const isVisible = !overlay.classList.contains('hidden')
+
+    if (isVisible) {
+      overlay.classList.add('hidden')
+    } else {
+      overlay.textContent = JSON.stringify(info, null, 2)
+      overlay.classList.remove('hidden')
     }
-
-    overlay = document.createElement('pre')
-    overlay.id = 'diagnostics-overlay'
-    overlay.textContent = JSON.stringify(info, null, 2)
-    overlay.style.position = 'absolute'
-    overlay.style.top = '0'
-    overlay.style.right = '0'
-    overlay.style.backgroundColor = 'rgba(0, 0, 0, 0.8)'
-    overlay.style.color = 'lime'
-    overlay.style.padding = '1rem'
-    overlay.style.margin = '1rem'
-    overlay.style.zIndex = '9999'
-    overlay.style.maxWidth = '400px'
-    overlay.style.fontSize = '12px'
-    overlay.style.overflow = 'auto'
-    overlay.style.whiteSpace = 'pre-wrap'
-
-    document.body.appendChild(overlay)
   }
 }
