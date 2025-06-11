@@ -1,6 +1,6 @@
-import Player from './player/Player.js'
+import App from './App.js'
 
 window.addEventListener('DOMContentLoaded', () => {
-  const player = new Player()
-  player.start()
+  const app = new App()
+  app.init()
 })
