@@ -30,3 +30,23 @@ video {
 video.visible {
   opacity: 1;
 }
+
+#diagnostics-overlay {
+  position: absolute;
+  top: 0;
+  right: 0;
+  background-color: rgba(0, 0, 0, 0.8);
+  color: lime;
+  padding: 1rem;
+  margin: 1rem;
+  z-index: 9999;
+  max-width: 400px;
+  font-size: 12px;
+  overflow: auto;
+  white-space: pre-wrap;
+}
+
+#diagnostics-overlay.hidden {
+  display: none;
+}
+
