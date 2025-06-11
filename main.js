@@ -14,7 +14,7 @@ function createWindow() {
     backgroundColor: '#000000',
   });
 
-  win.loadFile('renderer/index.html');
+  win.loadFile('src/renderer/index.html');
 }
 
 app.whenReady().then(createWindow);

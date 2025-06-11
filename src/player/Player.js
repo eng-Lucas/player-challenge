@@ -1,9 +1,11 @@
 const fs = require('fs');
 const path = require('path');
+const Logger = require('../helpers/Logger')
 
 const video1 = document.getElementById('video1');
 const video2 = document.getElementById('video2');
 const description = document.getElementById('description');
+const logger = new Logger('player.log', true)
 
 let playlist = [];
 let currentIndex = 0;
@@ -11,9 +13,11 @@ let currentVideo = video1;
 let nextVideo = video2;
 
 function loadPlaylist() {
-    const data = fs.readFileSync(path.join(__dirname, '../assets/playlist.json'), 'utf-8');
+    const data = fs.readFileSync(path.join(__dirname, '../../assets/playlist.json'), 'utf-8');
     const json = JSON.parse(data);
     playlist = json.playlist || [];
+
+    logger.log(`Playlist carregada com ${playlist.length} itens.`);
 }
 
 function swapVideos() {
@@ -52,12 +56,15 @@ function playNext() {
 
     nextVideo.oncanplay = () => {
         nextVideo.play().catch(err => {
-            console.error('Error starting video:', err);
+            logger.error(`Erro ao iniciar o vídeo: ${item.description} - ${item.url} ${err}`);
+            
             skipToNext();
         });
     };
 
     nextVideo.onplaying = () => {
+        logger.debug(`Tocando: ${item.description} - ${item.url}`);
+
         // Visual transition
         nextVideo.classList.add('visible');
         currentVideo.classList.remove('visible');
@@ -69,13 +76,16 @@ function playNext() {
 
             // Listen for ended on the new currentVideo
             currentVideo.onended = () => {
+                logger.debug(`Vídeo finalizado: ${playlist[currentIndex].description}`);
+                
                 skipToNext();
             };
         }, 1000);
     };
 
     nextVideo.onerror = () => {
-        console.error('Error loading video, skipping...');
+        logger.error(`Erro ao carregar vídeo: ${item.url}`);
+
         skipToNext();
     };
 }
