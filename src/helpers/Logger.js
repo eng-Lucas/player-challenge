@@ -1,9 +1,15 @@
 import fs from 'fs'
 import path from 'path'
+import os from 'os'
 
-export default class Logger {
-  constructor(filename = 'player.log', enableDebug = false) {
-    this.logPath = path.join(__dirname, '..', filename)
+const Logger = new (class {
+  constructor(filename = 'app.log', enableDebug = true) {
+    const logDir = path.join(os.homedir(), '.player-logs')
+    if (!fs.existsSync(logDir)) {
+      fs.mkdirSync(logDir, { recursive: true })
+    }
+
+    this.logPath = path.join(logDir, filename)
     this.enableDebug = enableDebug
   }
 
@@ -45,4 +51,6 @@ export default class Logger {
   error(message) {
     this._write('error', message)
   }
-}
+})()
+
+export default Logger

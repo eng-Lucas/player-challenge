@@ -1,7 +1,7 @@
 import os from 'os'
 
 export default class Diagnostics {
-  constructor() {
+  start() {
     document.addEventListener('keydown', async (event) => {
       if (event.code === 'F2') {
         const info = await this.getDiagnosticsInfo()

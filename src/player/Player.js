@@ -1,13 +1,13 @@
 import fs from 'fs'
 import path from 'path'
 import Logger from '../helpers/Logger.js'
+import VideoCache from '../lib/VideoCache.js'
 
 export default class Player {
   constructor() {
     this.video1 = document.getElementById('video1')
     this.video2 = document.getElementById('video2')
     this.description = document.getElementById('description')
-    this.logger = new Logger('player.log', true)
 
     this.playlist = []
     this.currentIndex = 0
@@ -26,9 +26,9 @@ export default class Player {
       const json = JSON.parse(data)
       this.playlist = json.playlist || []
 
-      this.logger.log(`Playlist carregada com ${this.playlist.length} itens.`)
+      Logger.log(`Playlist carregada com ${this.playlist.length} itens.`)
     } catch (error) {
-      this.logger.error(`Erro ao carregar a playlist: ${error}`)
+      Logger.error(`Erro ao carregar a playlist: ${error}`)
     }
   }
 
@@ -49,7 +49,7 @@ export default class Player {
     video.onended = null
   }
 
-  playNext() {
+  async playNext() {
     if (this.playlist.length === 0) return
 
     const item = this.playlist[this.currentIndex]
@@ -57,18 +57,20 @@ export default class Player {
 
     this.cleanupVideo(this.nextVideo)
 
-    this.nextVideo.src = item.url
-    this.nextVideo.load()
+
+    const localPath = await VideoCache.getVideoPath(item.url)
+
+    this.nextVideo.src = localPath
 
     this.nextVideo.oncanplay = () => {
       this.nextVideo.play().catch((err) => {
-        this.logger.error(`Erro ao iniciar o vídeo: ${item.description} - ${item.url} ${err}`)
+        Logger.error(`Erro ao iniciar o vídeo: ${item.description} - ${item.url} ${err}`)
         this.skipToNext()
       })
     }
 
     this.nextVideo.onplaying = () => {
-      this.logger.debug(`Tocando: ${item.description} - ${item.url}`)
+      Logger.debug(`Tocando: ${item.description} - ${item.url}`)
 
       this.nextVideo.classList.add('visible')
       this.currentVideo.classList.remove('visible')
@@ -78,14 +80,14 @@ export default class Player {
         this.swapVideos()
 
         this.currentVideo.onended = () => {
-          this.logger.debug(`Vídeo finalizado: ${this.playlist[this.currentIndex].description}`)
+          Logger.debug(`Vídeo finalizado: ${this.playlist[this.currentIndex].description}`)
           this.skipToNext()
         }
       }, 1000)
     }
 
     this.nextVideo.onerror = () => {
-      this.logger.error(`Erro ao carregar vídeo: ${item.url}`)
+      Logger.error(`Erro ao carregar vídeo: ${item.url}`)
       this.skipToNext()
     }
   }
