@@ -5,14 +5,29 @@ import { URL } from 'url'
 import Logger from './Logger.js'
 import { getBaseAppPath } from '../helpers'
 
+/**
+ * VideoCache is a singleton class responsible for caching video files locally.
+ * It checks if a video is already cached and returns the local path if available,
+ * otherwise it downloads the video asynchronously for future use.
+ *
+ * - Only supports caching of MP4, WebM, and MOV formats.
+ * - Skips caching for DASH or unsupported formats.
+ * - Generates safe, unique filenames for cached videos.
+ *
+ * @class
+ * @example
+ * const localPath = await VideoCache.getVideoPath(videoUrl)
+ */
 const VideoCache = new (class {
   constructor() {
     const baseDir = getBaseAppPath()
-    this.cacheDir = path.join(baseDir, 'cache')
+    this._cacheDir = path.join(baseDir, 'cache')
 
-    if (!fs.existsSync(this.cacheDir)) {
-      fs.mkdirSync(this.cacheDir, { recursive: true })
+    if (!fs.existsSync(this._cacheDir)) {
+      fs.mkdirSync(this._cacheDir, { recursive: true })
     }
+
+    Object.preventExtensions(this)
   }
 
   async getVideoPath(url) {
@@ -24,7 +39,7 @@ const VideoCache = new (class {
     }
 
     const fileName = this._getSafeFileName(url)
-    const localPath = path.join(this.cacheDir, fileName)
+    const localPath = path.join(this._cacheDir, fileName)
 
     if (fs.existsSync(localPath)) {
       Logger.debug(`Video in cache ${localPath}`)
@@ -58,6 +73,7 @@ const VideoCache = new (class {
   _download(url, destPath) {
     return new Promise((resolve, reject) => {
       Logger.debug(`Video not cached yet, downloading... ${url}`)
+
       const file = fs.createWriteStream(destPath)
       https.get(url, (response) => {
         if (response.statusCode !== 200) {
@@ -68,6 +84,7 @@ const VideoCache = new (class {
         response.pipe(file)
         file.on('finish', () => {
           file.close(resolve)
+
           Logger.debug(`Download finished. File path: ${destPath} `)
         })
       }).on('error', (err) => {
