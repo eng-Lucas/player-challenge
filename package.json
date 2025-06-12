@@ -7,7 +7,7 @@
   "license": "ISC",
   "description": "",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
+    "test": "jest",
     "lint": "eslint '**/*.js'",
     "lint:fix": "eslint '**/*.js' --fix",
     "build:babel": "babel src --out-dir dist",
@@ -63,6 +63,8 @@
     "eslint-plugin-jest": "^28.11.0",
     "eslint-plugin-prettier": "^5.2.3",
     "globals": "^15.14.0",
+    "jest": "^30.0.0",
+    "jest-environment-jsdom": "^30.0.0",
     "prettier": "^3.4.2"
   },
   "dependencies": {

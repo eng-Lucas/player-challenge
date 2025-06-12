@@ -38,7 +38,9 @@ const Logger = new (class {
     const enableDebug = config.enableDebug
 
     const baseDir = getBaseAppPath()
-    if (!fs.existsSync(baseDir)) fs.mkdirSync(baseDir, { recursive: true })
+    if (!fs.existsSync(baseDir)) {
+      fs.mkdirSync(baseDir, { recursive: true })
+    }
 
     this._logPath = path.join(baseDir, filename)
     this._enableDebug = enableDebug
@@ -71,7 +73,7 @@ const Logger = new (class {
       // save to file
       fs.appendFileSync(this._logPath, fullMessage)
     } catch (err) {
-      console.error(`[${timestamp}] [ERROR] Erro ao salvar no arquivo de logs ${err}`)
+      console.error(`[${timestamp}] [ERROR] Error saving to log file ${err}`)
     }
 
     // log to console
