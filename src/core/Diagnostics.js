@@ -11,9 +11,7 @@ import Logger from '../lib/Logger'
  */
 export default class Diagnostics {
   start() {
-    Logger.log(`habilitado: ${config.diagnosticsEnabledOnStart}`)
     if (config.diagnosticsEnabledOnStart) {
-      Logger.log('mostrando diagnostico')
       this._toggleDiagnosticsOverlay()
     }
 
