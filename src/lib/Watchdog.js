@@ -1,11 +1,11 @@
+import { config } from '../config.js'
 import Logger from './Logger.js'
 
 // Watchdog singleton to monitor video playback and detect freezes
 const Watchdog = new (class {
   constructor() {
-    this.interval = null
-    this.lastTime = null
-    this.video = null
+    this._interval = null
+    this._lastTime = null
 
     Object.preventExtensions(this)
   }
@@ -20,25 +20,27 @@ const Watchdog = new (class {
 
     Logger.debug('Starting watchdog')
 
-    this.lastTime = video.currentTime
+    this._lastTime = video.currentTime
 
     // Check every 5 seconds if the video is frozen
-    this.interval = setInterval(() => {
-      if (!video || video.paused || video.ended) {
+    this._interval = setInterval(() => {
+      // If the window is not active and visible, the player will be paused and this is already handled in the player.
+      // When it becomes active again, the player will resume playing from where it stopped.
+      if (!video || document.visibilityState !== 'visible') {
         return
       }
 
       // If the currentTime hasn't changed, the video is frozen
-      if (video.currentTime === this.lastTime) {
+      if (video.currentTime === this._lastTime) {
         Logger.warn(`Watchdog: video stuck at ${video.currentTime}s`)
         this.stop()
         if (typeof onFreeze === 'function') {
           onFreeze.call(this)
         }
       } else {
-        this.lastTime = video.currentTime
+        this._lastTime = video.currentTime
       }
-    }, 5000)
+    }, config.watchdogTimeout)
   }
 
   /**
@@ -47,9 +49,9 @@ const Watchdog = new (class {
   stop() {
     Logger.debug('Stopping watchdog')
 
-    if (this.interval) {
-      clearInterval(this.interval)
-      this.interval = null
+    if (this._interval) {
+      clearInterval(this._interval)
+      this._interval = null
     }
   }
 })()

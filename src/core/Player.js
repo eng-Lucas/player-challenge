@@ -101,6 +101,7 @@ export default class Player {
    */
   async _playNext() {
     if (this._playlist.length === 0) {
+      Logger.warn('Empty playlist')
       return
     }
 

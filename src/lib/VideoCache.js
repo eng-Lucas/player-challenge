@@ -35,6 +35,7 @@ const VideoCache = new (class {
     const unsupported = !url.match(/\.(mp4|webm|mov)(\?.*)?$/i)
     if (unsupported || url.includes('/dash/')) {
       Logger.debug('Format not supported for cache')
+
       return url
     }
 
@@ -43,6 +44,7 @@ const VideoCache = new (class {
 
     if (fs.existsSync(localPath)) {
       Logger.debug(`Video in cache ${localPath}`)
+
       return localPath
     }
 
