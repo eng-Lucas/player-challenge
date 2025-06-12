@@ -65,7 +65,7 @@ const VideoCache = new (class {
     const base = path.basename(urlObj.pathname)
 
     // Avoids dangerous or duplicate names with query
-    const hash = Buffer.from(url).toString('base64').replace(/[\/=]/g, '')
+    const hash = Buffer.from(url).toString('base64').replace(/[/=]/g, '')
     return `${hash}-${base}`
   }
 

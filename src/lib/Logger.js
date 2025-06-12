@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import fs from 'fs'
 import path from 'path'
 import { getBaseAppPath } from '../helpers'
@@ -32,7 +33,7 @@ import { config } from '../config'
  * @param {string} message - The message to log.
  */
 const Logger = new (class {
-  constructor(e) {
+  constructor() {
     const filename = config.logFilename
     const enableDebug = config.enableDebug
 
@@ -85,6 +86,7 @@ const Logger = new (class {
         break
       case 'warning':
         console.warn(fullMessage.trim())
+        break
       default:
         console.log(fullMessage.trim())
     }
