@@ -10,7 +10,7 @@ const getBaseAppPath = () => {
   } else if (platform === 'darwin') {
     return path.join(home, 'Library', 'Application Support', 'player-challenge')
   } else {
-    // Linux e outros
+    // Linux and others
     return path.join(home, '.config', 'player-challenge')
   }
 }

@@ -16,10 +16,10 @@ const VideoCache = new (class {
   }
 
   async getVideoPath(url) {
-    // não cacheia DASH ou formatos não suportados
+    // does not cache DASH or unsupported formats
     const unsupported = !url.match(/\.(mp4|webm|mov)(\?.*)?$/i)
     if (unsupported || url.includes('/dash/')) {
-      Logger.debug('Formato não suportado para cache')
+      Logger.debug('Format not supported for cache')
       return url
     }
 
@@ -27,20 +27,20 @@ const VideoCache = new (class {
     const localPath = path.join(this.cacheDir, fileName)
 
     if (fs.existsSync(localPath)) {
-      Logger.debug(`Video em cache ${localPath}`)
+      Logger.debug(`Video in cache ${localPath}`)
       return localPath
     }
 
     try {
-      // faz o download de forma assincrona. Na próxima execução, usará a partir do cache
+      // downloads asynchronously. On the next run, it will use from cache
       this._download(url, localPath)
 
-      // retorna a url do vídeo para que não seja preciso ficar à espera do download
+      // returns the video url so you don't have to wait for the download
       return url
     } catch (err) {
-      Logger.error(`Erro ao fazer cache do vídeo ${url}: ${err}`)
+      Logger.error(`Error caching video ${url}: ${err}`)
 
-      // fallback remoto
+      // remote fallback
       return url
     }
   }
@@ -50,25 +50,25 @@ const VideoCache = new (class {
     const urlObj = new URL(url)
     const base = path.basename(urlObj.pathname)
 
-    // Evita nomes perigosos ou duplicados com query
+    // Avoids dangerous or duplicate names with query
     const hash = Buffer.from(url).toString('base64').replace(/[\/=]/g, '')
     return `${hash}-${base}`
   }
 
   _download(url, destPath) {
     return new Promise((resolve, reject) => {
-      Logger.debug(`Video ainda não guardado, baixando... ${url}`)
+      Logger.debug(`Video not cached yet, downloading... ${url}`)
       const file = fs.createWriteStream(destPath)
       https.get(url, (response) => {
         if (response.statusCode !== 200) {
-          reject(`Status ${response.statusCode} ao baixar ${url}`)
+          reject(`Status ${response.statusCode} when downloading ${url}`)
           return
         }
 
         response.pipe(file)
         file.on('finish', () => {
           file.close(resolve)
-          Logger.debug(`Download concluido. Caminho do arquivo: ${destPath} `)
+          Logger.debug(`Download finished. File path: ${destPath} `)
         })
       }).on('error', (err) => {
         fs.unlink(destPath, () => reject(err))
