@@ -13,5 +13,5 @@ dotenv.config()
 export const config = {
   diagnosticsEnabledOnStart: process.env.DIAGNOSTICS_ENABLED_ON_START === 'true',
   logFilename: process.env.LOG_FILENAME || 'app.log',
-  enableDebug: process.env.LOG_DEBUG === 'true'
+  enableDebug: process.env.LOG_DEBUG === 'true',
 }

@@ -184,7 +184,7 @@ export default class Player {
         Logger.debug('App returned to focus')
 
         if (this._currentVideo && this._currentVideo.paused) {
-          this._currentVideo.play().catch(err => {
+          this._currentVideo.play().catch((err) => {
             Logger.error(`Error resuming video on return: ${err}`)
           })
         }

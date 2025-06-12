@@ -33,10 +33,10 @@ export default class Diagnostics {
         cpus: os.cpus().length,
         memory: {
           total: os.totalmem(),
-          free: os.freemem()
-        }
+          free: os.freemem(),
+        },
       },
-      versions: process.versions
+      versions: process.versions,
     }
   }
 

@@ -60,7 +60,6 @@ const VideoCache = new (class {
     }
   }
 
-
   _getSafeFileName(url) {
     const urlObj = new URL(url)
     const base = path.basename(urlObj.pathname)
@@ -75,21 +74,23 @@ const VideoCache = new (class {
       Logger.debug(`Video not cached yet, downloading... ${url}`)
 
       const file = fs.createWriteStream(destPath)
-      https.get(url, (response) => {
-        if (response.statusCode !== 200) {
-          reject(`Status ${response.statusCode} when downloading ${url}`)
-          return
-        }
+      https
+        .get(url, (response) => {
+          if (response.statusCode !== 200) {
+            reject(`Status ${response.statusCode} when downloading ${url}`)
+            return
+          }
 
-        response.pipe(file)
-        file.on('finish', () => {
-          file.close(resolve)
+          response.pipe(file)
+          file.on('finish', () => {
+            file.close(resolve)
 
-          Logger.debug(`Download finished. File path: ${destPath} `)
+            Logger.debug(`Download finished. File path: ${destPath} `)
+          })
         })
-      }).on('error', (err) => {
-        fs.unlink(destPath, () => reject(err))
-      })
+        .on('error', (err) => {
+          fs.unlink(destPath, () => reject(err))
+        })
     })
   }
 })()
