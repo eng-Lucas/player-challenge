@@ -75,6 +75,16 @@ Os executáveis serão gerados na pasta `release/.`
 
 ---
 
+## Testes unitários
+
+Foram implementados testes com `jest` para algumas classes. Para testar, execute:
+
+```bash
+npm run test
+```
+
+---
+
 ## Diretório do app
 
 A aplicação armazena automaticamente os arquivos de log e o cache dos vídeos em uma pasta específica do sistema operacional, dentro do diretório de dados da aplicação:
