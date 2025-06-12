@@ -13,22 +13,24 @@ export default class Player {
     this.currentIndex = 0
     this.currentVideo = this.video1
     this.nextVideo = this.video2
+    this.transitionInProgress = false
   }
 
   start() {
+    this._visibilityChangeHandler()
     this._loadPlaylist()
     this._playNext()
   }
 
   _loadPlaylist() {
     try {
-      const data = fs.readFileSync(path.join(__dirname, '../../assets/playlist.json'), 'utf-8')
+      const data = fs.readFileSync(path.join(__dirname, '../../data/playlist.json'), 'utf-8')
       const json = JSON.parse(data)
       this.playlist = json.playlist || []
 
-      Logger.log(`Playlist carregada com ${this.playlist.length} itens.`)
+      Logger.log(`Playlist loaded with ${this.playlist.length} items.`)
     } catch (error) {
-      Logger.error(`Erro ao carregar a playlist: ${error}`)
+      Logger.error(`Error loading playlist: ${error}`)
     }
   }
 
@@ -57,37 +59,44 @@ export default class Player {
 
     this._cleanupVideo(this.nextVideo)
 
-
     const localPath = await VideoCache.getVideoPath(item.url)
 
     this.nextVideo.src = localPath
 
     this.nextVideo.oncanplay = () => {
       this.nextVideo.play().catch((err) => {
-        Logger.error(`Erro ao iniciar o vídeo: ${item.description} - ${item.url} ${err}`)
+        Logger.error(`Error starting video: ${item.description} - ${item.url} ${err}`)
         this._skipToNext()
       })
     }
 
     this.nextVideo.onplaying = () => {
-      Logger.debug(`Tocando: ${item.description} - ${this.nextVideo.src}`)
+      if (this.transitionInProgress) return
+      this.transitionInProgress = true
+
+      Logger.debug(`Playing: ${item.description} - ${this.nextVideo.src}`)
 
       this.nextVideo.classList.add('visible')
       this.currentVideo.classList.remove('visible')
 
+      // waits a while to allow the fade before cleaning up
       setTimeout(() => {
+        Logger.debug(`Timeout, cleaning up currentVideo`)
+
         this._cleanupVideo(this.currentVideo)
         this._swapVideos()
 
+        // Updates the new currentVideo (after swap) to handle the end
         this.currentVideo.onended = () => {
-          Logger.debug(`Vídeo finalizado: ${this.playlist[this.currentIndex].description}`)
+          Logger.debug(`Video finished: ${this.playlist[this.currentIndex].description}`)
+          this.transitionInProgress = false
           this._skipToNext()
         }
-      }, 1000)
+      }, 600)
     }
 
     this.nextVideo.onerror = () => {
-      Logger.error(`Erro ao carregar vídeo: ${item.url}`)
+      Logger.error(`Error loading video: ${item.url}`)
       this._skipToNext()
     }
   }
@@ -95,5 +104,21 @@ export default class Player {
   _skipToNext() {
     this.currentIndex = (this.currentIndex + 1) % this.playlist.length
     this._playNext()
+  }
+
+  _visibilityChangeHandler() {
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        Logger.debug('App returned to focus')
+
+        if (this.currentVideo && this.currentVideo.paused) {
+          this.currentVideo.play().catch(err => {
+            Logger.error(`Error resuming video on return: ${err}`)
+          })
+        }
+      } else {
+        Logger.debug('App lost focus (hidden/minimized)')
+      }
+    })
   }
 }
