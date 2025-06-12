@@ -2,7 +2,7 @@
 
 ## Descrição
 
-Projeto desenvolvido como parte do processo seletivo da empresa 4YouSee(Eltromidia), visando atender os requisitos funcionais, técnicos e bônus que foram propostos
+Projeto desenvolvido como parte do processo seletivo da empresa 4YouSee(Eletromidia), visando atender os requisitos funcionais, técnicos e bônus que foram propostos:
 https://bitbucket.org/4yousee/4yousee-player-challenge/src/main/
 
 **Player Challenge** é uma aplicação desktop feita com Electron para reproduzir vídeos em sequência a partir de uma playlist JSON local. Ela oferece transições suaves, fallback automático em caso de erro de reprodução, e uma camada opcional de diagnóstico de sistema.
