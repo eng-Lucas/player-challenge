@@ -2,18 +2,16 @@ import fs from 'fs'
 import path from 'path'
 import https from 'https'
 import { URL } from 'url'
-import Logger from '../helpers/Logger.js'
-import os from 'os'
+import Logger from './Logger.js'
+import { getBaseAppPath } from '../helpers'
 
 const VideoCache = new (class {
   constructor() {
-    this.cacheDir = path.join(os.homedir(), '.player-cache')
-    Logger.debug(`Diretório de cache: ${this.cacheDir}`)
+    const baseDir = getBaseAppPath()
+    this.cacheDir = path.join(baseDir, 'cache')
 
     if (!fs.existsSync(this.cacheDir)) {
       fs.mkdirSync(this.cacheDir, { recursive: true })
-    } else if (!fs.lstatSync(this.cacheDir).isDirectory()) {
-      Logger.error(`Erro: '${this.cacheDir}' existe mas não é um diretório.`)
     }
   }
 
@@ -51,6 +49,7 @@ const VideoCache = new (class {
   _getSafeFileName(url) {
     const urlObj = new URL(url)
     const base = path.basename(urlObj.pathname)
+
     // Evita nomes perigosos ou duplicados com query
     const hash = Buffer.from(url).toString('base64').replace(/[\/=]/g, '')
     return `${hash}-${base}`
@@ -69,7 +68,7 @@ const VideoCache = new (class {
         response.pipe(file)
         file.on('finish', () => {
           file.close(resolve)
-          Logger.debug(`Download concluido. Caminho do arquivo: ${localPath} `)
+          Logger.debug(`Download concluido. Caminho do arquivo: ${destPath} `)
         })
       }).on('error', (err) => {
         fs.unlink(destPath, () => reject(err))

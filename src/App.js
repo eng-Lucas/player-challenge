@@ -1,6 +1,5 @@
-import Player from './player/Player.js'
-import Diagnostics from './diagnostics/Diagnostics.js'
-import os from 'os'
+import Player from './core/Player.js'
+import Diagnostics from './core/Diagnostics.js'
 
 export default class App {
   constructor() {
