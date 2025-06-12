@@ -1,6 +1,5 @@
 import os from 'os'
 import { config } from '../config'
-import Logger from '../lib/Logger'
 
 /**
  * Diagnostics class provides functionality to display system and environment diagnostics information.
