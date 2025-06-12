@@ -6,7 +6,10 @@ const getBaseAppPath = () => {
   const home = os.homedir()
 
   if (platform === 'win32') {
-    return path.join(process.env.LOCALAPPDATA || path.join(home, 'AppData', 'Local'), 'player-challenge')
+    return path.join(
+      process.env.LOCALAPPDATA || path.join(home, 'AppData', 'Local'),
+      'player-challenge'
+    )
   } else if (platform === 'darwin') {
     return path.join(home, 'Library', 'Application Support', 'player-challenge')
   } else {

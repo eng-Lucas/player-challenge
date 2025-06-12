@@ -1,1 +1,1 @@
-export {default as getBaseAppPath } from './getBaseAppPath'
+export { default as getBaseAppPath } from './getBaseAppPath'

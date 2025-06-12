@@ -1,0 +1,9 @@
+{
+  "recommendations": [
+    "editorconfig.editorconfig",
+    "dbaeumer.vscode-eslint",
+    "GitHub.vscode-pull-request-github",
+    "eamodio.gitlens",
+    "Gruntfuggly.todo-tree"
+  ]
+}
