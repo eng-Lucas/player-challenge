@@ -1,10 +1,26 @@
 import fs from 'fs'
 import path from 'path'
+import { getBaseAppPath } from '../helpers'
 
-export default class Logger {
-  constructor(filename = 'player.log', enableDebug = false) {
-    this.logPath = path.join(__dirname, '..', filename)
+const Logger = new (class {
+  constructor(filename = 'app.log', enableDebug = true) {
+    const baseDir = getBaseAppPath()
+    if (!fs.existsSync(baseDir)) fs.mkdirSync(baseDir, { recursive: true })
+
+    this.logPath = path.join(baseDir, filename)
     this.enableDebug = enableDebug
+  }
+
+  log(message) {
+    this._write('log', message)
+  }
+
+  debug(message) {
+    this._write('debug', message)
+  }
+
+  error(message) {
+    this._write('error', message)
   }
 
   _write(level, message) {
@@ -33,16 +49,6 @@ export default class Logger {
         console.log(fullMessage.trim())
     }
   }
+})()
 
-  log(message) {
-    this._write('log', message)
-  }
-
-  debug(message) {
-    this._write('debug', message)
-  }
-
-  error(message) {
-    this._write('error', message)
-  }
-}
+export default Logger
